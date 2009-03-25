@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 #-*- coding:utf-8 -*-
 
+import os
+
 class CommitDialog (object):
 
 	def __init__(self,window,glade_xml):
@@ -22,12 +24,16 @@ class CommitDialog (object):
 		self.close_button.connect("clicked", self.on_cancel_button_clicked)
 
 		self.commit_text_box = self.glade_xml.get_widget("commit_text")
-		self.commit_text_box.connect("changed", self.on_commit_text_changed)
+		self.commit_text_box.connect("insert-at-cursor", self.on_commit_text_changed)
 		
 	def on_cancel_button_clicked(self, close_button):
 		self.commit_dialog.hide()
 	
 	def on_commit_button_clicked(self, close_button):
+		commit_text_buffer = self.commit_text_box.get_buffer()
+		os.system("git-commit -s -m'"+commit_text_buffer.get_text(commit_text_buffer.get_start_iter(),commit_text_buffer.get_end_iter())+"'")
+		commit_text_buffer.set_text("")
+		self.commit_dialog.hide()
 		pass
 		
 	def on_commit_text_changed(self, commit_text_entry):

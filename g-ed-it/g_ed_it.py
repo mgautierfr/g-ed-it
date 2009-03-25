@@ -11,7 +11,7 @@ import time
 import menuManager
 import commitDialog
 
-GLADE_FILE = os.path.join(os.path.dirname(__file__), "commit.glade")
+GLADE_FILE = os.path.join(os.path.dirname(__file__), "g-ed-it.glade")
 
 class PluginHelper:
 	def __init__(self, plugin, window):
