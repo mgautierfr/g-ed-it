@@ -115,16 +115,4 @@ class PluginHelper:
 		self._search_text_box = self.glade_xml.get_widget("commit_text")
 		self._search_text_box.connect("changed", self.on_commit_text_changed)
 
-class G_ed_it(gedit.Plugin):
-	def __init__(self):
-		gedit.Plugin.__init__(self)
-		self.instances = {}
-		
-	def activate(self, window):
-		self.instances[window] = PluginHelper(self, window)
-		
-	def deactivate(self, window):
-		self.instances[window].deactivate()
-		
-	def update_ui(self, window):
-		self.instances[window].update_ui()
+
