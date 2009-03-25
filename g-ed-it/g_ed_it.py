@@ -8,17 +8,7 @@ import gobject
 import os
 import time
 
-ui_string = """<ui>
-  <menubar name="MenuBar">
-    <placeholder name="ExtraMenu_1">
-      <menu action="GitMenu">
-        <menuitem action="Commit"/>
-        <menuitem action="Add"/>
-      </menu>
-    </placeholder>
-  </menubar>
-</ui>
-"""
+import menuManager
 
 GLADE_FILE = os.path.join(os.path.dirname(__file__), "commit.glade")
 
@@ -26,11 +16,10 @@ class PluginHelper:
 	def __init__(self, plugin, window):
 		self.window = window
 		self.plugin = plugin
-		
-		self.ui_id = None
 
-		# Add a "toggle split view" item to the View menu
-		self.insert_menu_item(window)
+		self.createActionManager()
+
+		self.menuManager = menuManager.MenuManager(window)
 		self.load_dialogs()
 
 
@@ -39,7 +28,8 @@ class PluginHelper:
 		except: self.encoding = gedit.gedit_encoding_get_current()
 		
 	def deactivate(self):        
-		self.remove_menu_item()
+		self.menuManager.deactivate()
+		self.manager.remove_action_group(self.action_group)
 		
 		self.window = None
 		self.plugin = None
@@ -47,8 +37,41 @@ class PluginHelper:
 	def update_ui(self):
 		return
 		    
-	def commit_action(self, window):
+	def action_commit(self, window):
 		self._search_dialog.show()
+		pass
+
+	def action_add(self, window):
+		pass
+		
+	def createActionManager(self):
+		self.manager = self.window.get_ui_manager()
+		
+		
+		self.action_group = gtk.ActionGroup("GitPluginActions")
+		
+		self.git_menu_action = gtk.Action(name="GitMenu",
+		                                   label="Git",
+		                                   tooltip="Manage git",
+		                                   stock_id=None)
+		self.commit_action    = gtk.Action(name="Commit",
+		                                   label="Commit",
+		                                   tooltip="Commit current state",
+		                                   stock_id=gtk.STOCK_GO_UP)
+		self.add_action       = gtk.Action(name="Add",
+		                                   label="Add to index",
+		                                   tooltip="",
+		                                   stock_id=gtk.STOCK_ADD)
+		
+		self.commit_action.connect("activate", self.action_commit)
+		self.add_action.connect("activate", self.action_add)
+		
+		self.action_group.add_action(self.git_menu_action)
+		self.action_group.add_action(self.commit_action)
+		self.action_group.add_action(self.add_action)
+
+		# Add the action group.
+		self.manager.insert_action_group(self.action_group, -1)
 		pass
 		
 	 ###
@@ -63,35 +86,6 @@ class PluginHelper:
     # Called when the text to be replaced is changed.
 	def on_commit_text_changed(self, commit_text_entry):
 		pass
-		
-
-	def add_action(self, window):
-		pass
-
-	def insert_menu_item(self, window):
-		manager = self.window.get_ui_manager()
-		
-		self.action_group = gtk.ActionGroup("GitPluginActions")
-		
-		self.git_menu_action_ = gtk.Action(name="GitMenu", label="Git",          tooltip="Manage git", stock_id=None)
-		self.commit_action_   = gtk.Action(name="Commit",  label="Commit",       tooltip="Commit current state", stock_id=gtk.STOCK_GO_UP)
-		self.add_action_      = gtk.Action(name="Add",     label="Add to index", tooltip="", stock_id=gtk.STOCK_ADD)
-		self.commit_action_.connect("activate", self.commit_action)
-		self.add_action_.connect("activate", self.add_action)
-		
-		self.action_group.add_action(self.git_menu_action_)
-		self.action_group.add_action(self.commit_action_)
-		self.action_group.add_action(self.add_action_)
-
-		# Add the action group.
-		manager.insert_action_group(self.action_group, -1)
-
-		self.ui_id = manager.add_ui_from_string(ui_string)
-		
-	def remove_menu_item(self):
-		manager.remove_ui(self.ui_id)
-		manager.remove_action_group(self.action_group)
-		manager.ensure_update()
 		
 	###
 	# Load commit dialog.
