@@ -2,7 +2,7 @@
 Loader=python
 Module=g-ed-it
 IAge=2
-Name=g(ed)it
+Name=g-ed-it
 Description=Add git project management in gedit
 Authors=Matthieu Gautier <mgautier@fedoraproject.org>
 Copyright=© Matthieu Gautier 2009
