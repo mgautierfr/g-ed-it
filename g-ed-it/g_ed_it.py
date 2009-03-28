@@ -10,10 +10,14 @@ import time
 
 import menuManager
 import commitDialog
+import docBar
 
 GLADE_FILE = os.path.join(os.path.dirname(__file__), "g-ed-it.glade")
 
-class PluginHelper:
+class G_ed_itHelper:
+	G_ED_IT_VIEW_DATA_KEY = "G-ed-itPluginTabData"
+	G_ED_IT_WINDOW_DATA_KEY = "G-ed-itPluginWindowData"
+	
 	def __init__(self, plugin, window):
 		self.window = window
 		self.plugin = plugin
@@ -24,6 +28,10 @@ class PluginHelper:
 		self.menuManager = menuManager.MenuManager(self.window)
 		
 		self.commitDialog = commitDialog.CommitDialog(self.window,self.glade_xml)
+		
+		self.setCallBack()
+		
+		
 
 		# I hardly even know how this works, but it gets our encoding.
 		try: self.encoding = gedit.encoding_get_current()
@@ -32,6 +40,14 @@ class PluginHelper:
 	def deactivate(self):        
 		self.menuManager.deactivate()
 		self.manager.remove_action_group(self.action_group)
+		
+		handlers = self.window.get_data(self.G_ED_IT_WINDOW_DATA_KEY)
+		for handler in handlers:
+			self.window.disconnect(handler)
+		self.window.set_data(self.G_ED_IT_WINDOW_DATA_KEY, None)
+	
+		for view in self.window.get_views():
+			view.get_data(self.G_ED_IT_VIEW_DATA_KEY).deactivate()
 		
 		self.window = None
 		self.plugin = None
@@ -75,5 +91,25 @@ class PluginHelper:
 		# Add the action group.
 		self.manager.insert_action_group(self.action_group, -1)
 		pass
+		
+	def setCallBack(self):
+		for view in self.window.get_views():
+			tab = view
+			while (tab.__class__ != gedit.Tab):
+				tab = tab.get_parent()
+			self.createDocBar(tab)
 
-
+		added_hid = self.window.connect("tab-added",
+		                            lambda w, t: self.createDocBar(t))
+		removed_hid = self.window.connect("tab-removed",
+		                              lambda w, t: self.removeDocBar(t))
+		self.window.set_data(self.G_ED_IT_WINDOW_DATA_KEY, (added_hid, removed_hid))
+		pass
+		
+	def createDocBar(self, tab):
+		docBar_ = docBar.DocBar(tab)
+		tab.get_view().set_data(self.G_ED_IT_VIEW_DATA_KEY, docBar_)
+		
+	def removeDocBar(self, tab):
+		tab.get_view().get_data(self.G_ED_IT_VIEW_DATA_KEY).deactivate()
+		tab.get_view().set_data(self.G_ED_IT_VIEW_DATA_KEY, None)
