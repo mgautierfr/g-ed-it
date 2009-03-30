@@ -3,6 +3,8 @@
 
 import os
 
+import subprocess
+
 class CommitDialog (object):
 
 	def __init__(self,window,glade_xml):
@@ -39,7 +41,14 @@ class CommitDialog (object):
 	def on_commit_text_changed(self, commit_text_entry):
 		pass
 		
-	def show(self):
+	def show(self,fileName=None):
+		self.fileName = fileName
+		if self.fileName:
+			templateMsg = subprocess.Popen(["git-status","-s",os.path.basename(fileName)],stdout=subprocess.PIPE,cwd=os.path.dirname(fileName)).communicate()[0]
+		else:
+			cwd = os.path.dirname(self.window.get_active_document().get_uri_for_display())
+			templateMsg = subprocess.Popen(["git-status","-s"],stdout=subprocess.PIPE,cwd=cwd).communicate()[0]
+		self.commit_text_box.get_buffer().set_text(templateMsg)
 		self.commit_dialog.show()
 
 
