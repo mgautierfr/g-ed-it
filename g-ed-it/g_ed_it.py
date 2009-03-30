@@ -107,7 +107,7 @@ class G_ed_itHelper:
 		pass
 		
 	def createDocBar(self, tab):
-		docBar_ = docBar.DocBar(tab)
+		docBar_ = docBar.DocBar(tab,self.commitDialog)
 		tab.get_view().set_data(self.G_ED_IT_VIEW_DATA_KEY, docBar_)
 		
 	def removeDocBar(self, tab):
