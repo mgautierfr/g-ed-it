@@ -71,16 +71,17 @@ class DocBar (object):
 		self.toBeKilled = False;
 		self.other = False;
 		
-		statusStr = subprocess.Popen(["git-ls-files","--exclude-standard","-m","-c","-d","-o","-v",os.path.basename(uri)],stdout=subprocess.PIPE,cwd=cwd).communicate()[0] 
-		statusLines = statusStr.split("\n")
-		for statusLine in statusLines[:-1]:
-			status = statusLine.split()[0]
-			if status == "H": self.cached = True
-			if status == "M": self.unmerged = True
-			if status == "R": self.deleted = True
-			if status == "C": self.changed = True
-			if status == "K": self.toBeKilled = True
-			if status == "?": self.other = True
+		if not self.doc.is_untitled():
+			statusStr = subprocess.Popen(["git-ls-files","--exclude-standard","-m","-c","-d","-o","-v",os.path.basename(uri)],stdout=subprocess.PIPE,cwd=cwd).communicate()[0] 
+			statusLines = statusStr.split("\n")
+			for statusLine in statusLines[:-1]:
+				status = statusLine.split()[0]
+				if status == "H": self.cached = True
+				if status == "M": self.unmerged = True
+				if status == "R": self.deleted = True
+				if status == "C": self.changed = True
+				if status == "K": self.toBeKilled = True
+				if status == "?": self.other = True
 		self.setDocInfo()
 		pass
 	
