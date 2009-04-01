@@ -64,44 +64,67 @@ class DocBar (object):
 		cwd = os.path.dirname(uri)
 		bname = os.path.basename(uri)
 		
-		self.cached = False;
-		self.unmerged = False;
-		self.deleted = False;
-		self.changed = False;
-		self.toBeKilled = False;
-		self.other = False;
+		self.HEAD2index = None
+		self.index2WT = None
 		
 		if not self.doc.is_untitled():
-			statusStr = subprocess.Popen(["git-ls-files","--exclude-standard","-m","-c","-d","-o","-v",os.path.basename(uri)],stdout=subprocess.PIPE,cwd=cwd).communicate()[0] 
-			statusLines = statusStr.split("\n")
-			for statusLine in statusLines[:-1]:
-				status = statusLine.split()[0]
-				if status == "H": self.cached = True
-				if status == "M": self.unmerged = True
-				if status == "R": self.deleted = True
-				if status == "C": self.changed = True
-				if status == "K": self.toBeKilled = True
-				if status == "?": self.other = True
+			statusStr = subprocess.Popen(["git-diff","--cached","--name-status",os.path.basename(uri)],stdout=subprocess.PIPE,cwd=cwd).communicate()[0]
+			if statusStr != "":
+				status = statusStr[:-1].split()[0]
+				self.HEAD2index = status
+			statusStr = subprocess.Popen(["git-diff","--name-status",os.path.basename(uri)],stdout=subprocess.PIPE,cwd=cwd).communicate()[0]
+			if statusStr != "":
+				status = statusStr[:-1].split()[0]
+				self.index2WT = status
 		self.setDocInfo()
 		pass
 	
 	def setDocInfo(self):
-		self.btn_add.set_sensitive(False)
-		self.btn_commit.set_sensitive(False)
+		self.btn_add.set_sensitive(self.index2WT!=None)
+		self.btn_commit.set_sensitive(self.HEAD2index!=None)
 		if self.doc.is_untitled():
 			self.lbl_status.set_label("Nouveau fichier")
 		else:
-			if self.other:
-				self.lbl_status.set_label("not in the index and doesn't differ (may be tracked or not)")
-				self.btn_add.set_sensitive(True)
-			if self.cached:
-				self.lbl_status.set_label("in the index (will be commited)")
-				self.btn_commit.set_sensitive(True)
-			if self.changed:
-				self.lbl_status.set_label("differ from the index (will not be commited)")
-				self.btn_add.set_sensitive(True)
-			if self.cached and self.changed:
-				self.lbl_status.set_label("In the index but contain uncached modifications")
+			text = "HEAD -- "
+			if self.HEAD2index == "A":
+				text = text + "Added"
+			elif self.HEAD2index == "C":
+				text = text + "Copied"
+			elif self.HEAD2index == "D":
+				text = text + "Deleted"
+			elif self.HEAD2index == "M":
+				text = text + "Modified"
+			elif self.HEAD2index == "R":
+				text = text + "Renamed"
+			elif self.HEAD2index == "T":
+				text = text + "Type changed"
+			elif self.HEAD2index == "U":
+				text = text + "Unmerged"
+			elif self.HEAD2index == "X":
+				text = text + "Unknown"
+			elif self.HEAD2index == "B":
+				text = text + "pairing Broken"
+			text = text + " --> INDEX -- "
+			if self.index2WT == "A":
+				text = text + "Added"
+			elif self.index2WT == "C":
+				text = text + "Copied"
+			elif self.index2WT == "D":
+				text = text + "Deleted"
+			elif self.index2WT == "M":
+				text = text + "Modified"
+			elif self.index2WT == "R":
+				text = text + "Renamed"
+			elif self.index2WT == "T":
+				text = text + "Type changed"
+			elif self.index2WT == "U":
+				text = text + "Unmerged"
+			elif self.index2WT == "X":
+				text = text + "Unknown"
+			elif self.index2WT == "B":
+				text = text + "pairing Broken"
+			text = text + " --> WT"
+			self.lbl_status.set_label(text)
 		pass
 	
 	def doc_changed(self,doc,arg1):
