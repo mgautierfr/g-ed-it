@@ -33,6 +33,14 @@ class DocBar (object):
 		self.btn_commit = gtk.Button("commit")
 		self.btn_commit.connect("clicked", self.commit_file)
 		
+		self.btn_diff_head_index = gtk.Button("diff HEAD/INDEX")
+		self.btn_diff_head_index.connect("clicked", self.diff_head_index)
+		
+		self.btn_diff_index_wt = gtk.Button("diff INDEX/WT")
+		self.btn_diff_index_wt.connect("clicked", self.diff_index_wt)
+		
+		hbox.pack_start(self.btn_diff_head_index, False, False)
+		hbox.pack_start(self.btn_diff_index_wt, False, False)
 		hbox.pack_start(self.lbl_status, True, False)
 		hbox.pack_start(self.btn_add, False, False)
 		hbox.pack_start(self.btn_commit, False, False)
@@ -82,6 +90,8 @@ class DocBar (object):
 	def setDocInfo(self):
 		self.btn_add.set_sensitive(self.index2WT!=None)
 		self.btn_commit.set_sensitive(self.HEAD2index!=None)
+		self.btn_diff_head_index.set_sensitive(self.HEAD2index!=None)
+		self.btn_diff_index_wt.set_sensitive(self.index2WT!=None)
 		if self.doc.is_untitled():
 			self.lbl_status.set_label("Nouveau fichier")
 		else:
@@ -139,6 +149,16 @@ class DocBar (object):
 	def commit_file(self,button):
 		uri = self.doc.get_uri_for_display()
 		self.commitDialog.show(uri)
+		print "End of the commit !!!!!!!!"
 		self.getDocState()
 		pass
-		
+
+	def diff_head_index(self,button):
+		uri = self.doc.get_uri_for_display()
+		subprocess.call(["git-diff","--cached",os.path.basename(uri)],cwd=os.path.dirname(uri))
+		pass
+	
+	def diff_index_wt(self,button):
+		uri = self.doc.get_uri_for_display()
+		subprocess.call(["git-diff",os.path.basename(uri)],cwd=os.path.dirname(uri))
+		pass
