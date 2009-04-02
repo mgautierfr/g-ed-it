@@ -23,7 +23,7 @@ class DocBar (object):
 		self.update_handler1 =  self.doc.connect("saved",self.doc_changed)
 		self.update_handler2 =  self.doc.connect("loaded",self.doc_changed)
 		
-		hbox = gtk.HBox() 
+		self.docBar = gtk.HBox() 
 		
 		self.lbl_status = gtk.Label("État du fichier")
 		
@@ -39,20 +39,20 @@ class DocBar (object):
 		self.btn_diff_index_wt = gtk.Button("diff INDEX/WT")
 		self.btn_diff_index_wt.connect("clicked", self.diff_index_wt)
 		
-		hbox.pack_start(self.btn_diff_head_index, False, False)
-		hbox.pack_start(self.btn_diff_index_wt, False, False)
-		hbox.pack_start(self.lbl_status, True, False)
-		hbox.pack_start(self.btn_add, False, False)
-		hbox.pack_start(self.btn_commit, False, False)
+		self.docBar.pack_start(self.btn_diff_head_index, False, False)
+		self.docBar.pack_start(self.btn_diff_index_wt, False, False)
+		self.docBar.pack_start(self.lbl_status, True, False)
+		self.docBar.pack_start(self.btn_add, False, False)
+		self.docBar.pack_start(self.btn_commit, False, False)
 		
-		self.vbox.pack_start(hbox, False, False)
+		self.vbox.pack_start(self.docBar, False, False)
 		self.vbox.pack_start(self.child)
 		
 		self.tab.add(self.vbox)
 		
-		self.getDocState()
-		
 		self.tab.show_all()
+		
+		self.getDocState()
 		
 	def deactivate(self):
 		self.tab.remove(self.vbox)
@@ -72,28 +72,41 @@ class DocBar (object):
 		cwd = os.path.dirname(uri)
 		bname = os.path.basename(uri)
 		
+		self.inGitDir = False
+		self.iscached = False
 		self.HEAD2index = None
 		self.index2WT = None
 		
 		if not self.doc.is_untitled():
-			statusStr = subprocess.Popen(["git-diff","--cached","--name-status",os.path.basename(uri)],stdout=subprocess.PIPE,cwd=cwd).communicate()[0]
-			if statusStr != "":
-				status = statusStr[:-1].split()[0]
-				self.HEAD2index = status
-			statusStr = subprocess.Popen(["git-diff","--name-status",os.path.basename(uri)],stdout=subprocess.PIPE,cwd=cwd).communicate()[0]
-			if statusStr != "":
-				status = statusStr[:-1].split()[0]
-				self.index2WT = status
+			subPro = subprocess.Popen(["git-ls-files",os.path.basename(uri)],stdout=subprocess.PIPE,cwd=cwd)
+			statusStr = subPro.communicate()[0]
+			if subPro.returncode == 0 :
+				self.inGitDir = True
+				if statusStr != "":
+					self.iscached = True
+					statusStr = subprocess.Popen(["git-diff","--cached","--name-status",os.path.basename(uri)],stdout=subprocess.PIPE,cwd=cwd).communicate()[0]
+					if statusStr != "":
+						status = statusStr[:-1].split()[0]
+						self.HEAD2index = status
+					statusStr = subprocess.Popen(["git-diff","--name-status",os.path.basename(uri)],stdout=subprocess.PIPE,cwd=cwd).communicate()[0]
+					if statusStr != "":
+						status = statusStr[:-1].split()[0]
+						self.index2WT = status
 		self.setDocInfo()
 		pass
 	
 	def setDocInfo(self):
+		if not self.inGitDir :
+			self.docBar.hide()
+			return 
+		self.docBar.show()
 		self.btn_add.set_sensitive(self.index2WT!=None)
 		self.btn_commit.set_sensitive(self.HEAD2index!=None)
 		self.btn_diff_head_index.set_sensitive(self.HEAD2index!=None)
 		self.btn_diff_index_wt.set_sensitive(self.index2WT!=None)
-		if self.doc.is_untitled():
-			self.lbl_status.set_label("Nouveau fichier")
+		if not self.iscached :
+			self.lbl_status.set_label("Not cached")
+			self.btn_add.set_sensitive(True)
 		else:
 			text = "HEAD -- "
 			if self.HEAD2index == "A":
