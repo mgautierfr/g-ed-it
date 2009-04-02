@@ -33,6 +33,14 @@ class DocBar (object):
 		self.btn_commit = gtk.Button("commit")
 		self.btn_commit.connect("clicked", self.commit_file)
 		
+		self.btn_diff_head_index = gtk.Button("diff HEAD/INDEX")
+		self.btn_diff_head_index.connect("clicked", self.diff_head_index)
+		
+		self.btn_diff_index_wt = gtk.Button("diff INDEX/WT")
+		self.btn_diff_index_wt.connect("clicked", self.diff_index_wt)
+		
+		hbox.pack_start(self.btn_diff_head_index, False, False)
+		hbox.pack_start(self.btn_diff_index_wt, False, False)
 		hbox.pack_start(self.lbl_status, True, False)
 		hbox.pack_start(self.btn_add, False, False)
 		hbox.pack_start(self.btn_commit, False, False)
@@ -88,23 +96,28 @@ class DocBar (object):
 	def setDocInfo(self):
 		self.btn_add.set_sensitive(False)
 		self.btn_commit.set_sensitive(False)
+		self.btn_diff_head_index.set_sensitive(False)
+		self.btn_diff_index_wt.set_sensitive(False)
 		if self.doc.is_untitled():
 			self.lbl_status.set_label("Nouveau fichier")
 		else:
 			if self.other:
 				self.lbl_status.set_label("not in the index and doesn't differ (may be tracked or not)")
 				self.btn_add.set_sensitive(True)
+				self.btn_diff_index_wt.set_sensitive(True)
 			if self.cached:
 				self.lbl_status.set_label("in the index (will be commited)")
 				self.btn_commit.set_sensitive(True)
+				self.btn_diff_head_index.set_sensitive(True)
 			if self.changed:
 				self.lbl_status.set_label("differ from the index (will not be commited)")
 				self.btn_add.set_sensitive(True)
+				self.btn_diff_index_wt.set_sensitive(True)
 			if self.cached and self.changed:
 				self.lbl_status.set_label("In the index but contain uncached modifications")
 		pass
 	
-	def doc_changed(self,doc,arg1):
+	def doc_changed(self,doc,arg1):    
 		self.getDocState()
 		
 	def add_file(self,button):
@@ -118,4 +131,13 @@ class DocBar (object):
 		self.commitDialog.show(uri)
 		self.getDocState()
 		pass
-		
+
+	def diff_head_index(self,button):
+		uri = self.doc.get_uri_for_display()
+		subprocess.call(["git-diff","--cached",os.path.basename(uri)],cwd=os.path.dirname(uri))
+		pass
+	
+	def diff_index_wt(self,button):
+		uri = self.doc.get_uri_for_display()
+		subprocess.call(["git-diff",os.path.basename(uri)],cwd=os.path.dirname(uri))
+		pass
