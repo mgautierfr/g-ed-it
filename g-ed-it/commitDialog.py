@@ -34,6 +34,7 @@ class CommitDialog (object):
 	def on_commit_button_clicked(self, close_button):
 		commit_text_buffer = self.commit_text_box.get_buffer()
 		os.system("git-commit -s -m'"+commit_text_buffer.get_text(commit_text_buffer.get_start_iter(),commit_text_buffer.get_end_iter())+"'")
+		if self.call_obj :self.call_obj.getDocState()
 		commit_text_buffer.set_text("")
 		self.commit_dialog.hide()
 		pass
@@ -41,8 +42,9 @@ class CommitDialog (object):
 	def on_commit_text_changed(self, commit_text_entry):
 		pass
 		
-	def show(self,fileName=None):
+	def show(self,fileName=None, call_obj=None):
 		self.fileName = fileName
+		self.call_obj = call_obj
 		if self.fileName:
 			templateMsg = subprocess.Popen(["git-status","-s",os.path.basename(fileName)],stdout=subprocess.PIPE,cwd=os.path.dirname(fileName)).communicate()[0]
 		else:

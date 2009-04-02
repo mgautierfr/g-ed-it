@@ -148,9 +148,7 @@ class DocBar (object):
 		
 	def commit_file(self,button):
 		uri = self.doc.get_uri_for_display()
-		self.commitDialog.show(uri)
-		print "End of the commit !!!!!!!!"
-		self.getDocState()
+		self.commitDialog.show(uri,self)
 		pass
 
 	def diff_head_index(self,button):
