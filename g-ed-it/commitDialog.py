@@ -2,7 +2,6 @@
 #-*- coding:utf-8 -*-
 
 import os
-
 import subprocess
 
 class CommitDialog (object):
@@ -33,8 +32,10 @@ class CommitDialog (object):
 	
 	def on_commit_button_clicked(self, close_button):
 		commit_text_buffer = self.commit_text_box.get_buffer()
-		os.system("git-commit -s -m'"+commit_text_buffer.get_text(commit_text_buffer.get_start_iter(),commit_text_buffer.get_end_iter())+"'")
-		if self.call_obj :self.call_obj.getDocState()
+		subprocess.call(["git-commit","-m'"+commit_text_buffer.get_text(commit_text_buffer.get_start_iter(),commit_text_buffer.get_end_iter())+"'"],cwd=self.cwd)
+		if self.call_obj :
+			self.call_obj.getDocState()
+			print "callback"
 		commit_text_buffer.set_text("")
 		self.commit_dialog.hide()
 		pass
@@ -46,11 +47,13 @@ class CommitDialog (object):
 		self.fileName = fileName
 		self.call_obj = call_obj
 		if self.fileName:
-			templateMsg = subprocess.Popen(["git-status","-s",os.path.basename(fileName)],stdout=subprocess.PIPE,cwd=os.path.dirname(fileName)).communicate()[0]
+			self.cwd = os.path.dirname(fileName)
+			templateMsg = subprocess.Popen(["git-status","-s",os.path.basename(fileName)],stdout=subprocess.PIPE,cwd=self.cwd).communicate()[0]
 		else:
-			cwd = os.path.dirname(self.window.get_active_document().get_uri_for_display())
-			templateMsg = subprocess.Popen(["git-status","-s"],stdout=subprocess.PIPE,cwd=cwd).communicate()[0]
+			self.cwd = os.path.dirname(self.window.get_active_document().get_uri_for_display())
+			templateMsg = subprocess.Popen(["git-status","-s"],stdout=subprocess.PIPE,cwd=self.cwd).communicate()[0]
 		self.commit_text_box.get_buffer().set_text(templateMsg)
 		self.commit_dialog.show()
+		print "dialog shown"
 
 
