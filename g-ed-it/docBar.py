@@ -9,7 +9,7 @@ import os
 import os.path
 
 class DocBar (object):
-	code2status = dict({None:'Identical',
+	code2status = dict({None:'Unchanged',
 	                    'A':'Added',
 	                    'C':'Copied',
 	                    'D':'Deleted',
