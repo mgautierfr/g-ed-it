@@ -107,6 +107,7 @@ class WindowHelper:
 
 		# Add the action group.
 		self.manager.insert_action_group(self.action_group, -1)
+		self.manager.ensure_update()
 		pass
 		
 		
