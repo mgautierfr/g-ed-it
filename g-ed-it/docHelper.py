@@ -59,7 +59,7 @@ class DocHelper (object):
 		self.index2WT = None
 		
 		if not self.doc.is_untitled():
-			subPro = subprocess.Popen(["git-ls-files",os.path.basename(uri)],stdout=subprocess.PIPE,cwd=cwd)
+			subPro = subprocess.Popen(["git-ls-files",os.path.basename(uri)],stdout=subprocess.PIPE,stderr=subprocess.STDOUT,cwd=cwd)
 			statusStr = subPro.communicate()[0]
 			if subPro.returncode == 0 :
 				self.inGitDir = True
