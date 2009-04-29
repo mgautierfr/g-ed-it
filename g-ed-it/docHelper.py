@@ -39,6 +39,7 @@ class DocHelper (object):
 	def deactivate(self):
 		self.doc.disconnect(self.update_handler1)
 		self.doc.disconnect(self.update_handler2)
+		self.docBar.deactivate()
 		
 	def update_ui(self):
 		self.getDocState()
