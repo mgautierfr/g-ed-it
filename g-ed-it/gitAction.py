@@ -51,10 +51,10 @@ class GitAction (object):
 	
 	def diff_head_index(self,launcher, fileUriMethod = None):
 		if fileUriMethod : fileUri = fileUriMethod()
-		subprocess.call("git-difftool --tool=meld --no-prompt --cached "+os.path.basename(fileUri),stdout=subprocess.PIPE,cwd=os.path.dirname(fileUri), shell=True)
+		subprocess.call("git-diff --cached "+os.path.basename(fileUri),stdout=subprocess.PIPE,cwd=os.path.dirname(fileUri), shell=True)
 		pass
 	
 	def diff_index_wt(self, launcher, fileUriMethod = None):
 		if fileUriMethod : fileUri = fileUriMethod()
-		subprocess.call("git-difftool --tool=meld --no-prompt "+os.path.basename(fileUri),stdout=subprocess.PIPE,cwd=os.path.dirname(fileUri), shell=True)
+		subprocess.call("git-diff "+os.path.basename(fileUri),stdout=subprocess.PIPE,cwd=os.path.dirname(fileUri), shell=True)
 		pass
