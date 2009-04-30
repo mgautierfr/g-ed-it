@@ -45,16 +45,16 @@ class GitAction (object):
 	
 	def add(self,launcher,fileUriMethod = None):
 		if fileUriMethod : fileUri = fileUriMethod()
-		subprocess.call(["git-add",os.path.basename(fileUri)],stdout=subprocess.PIPE,cwd=os.path.dirname(fileUri))
+		subprocess.call("git-add "+os.path.basename(fileUri),stdout=subprocess.PIPE,cwd=os.path.dirname(fileUri), shell=True)
 		self.plugin.fast_update_ui()
 		pass
 	
 	def diff_head_index(self,launcher, fileUriMethod = None):
 		if fileUriMethod : fileUri = fileUriMethod()
-		subprocess.call(["git-difftool","--tool=meld","--no-prompt","--cached",os.path.basename(fileUri)],stdout=subprocess.PIPE,cwd=os.path.dirname(fileUri))
+		subprocess.call("git-difftool --tool=meld --no-prompt --cached "+os.path.basename(fileUri),stdout=subprocess.PIPE,cwd=os.path.dirname(fileUri), shell=True)
 		pass
 	
 	def diff_index_wt(self, launcher, fileUriMethod = None):
 		if fileUriMethod : fileUri = fileUriMethod()
-		subprocess.call(["git-difftool","--tool=meld","--no-prompt",os.path.basename(fileUri)],stdout=subprocess.PIPE,cwd=os.path.dirname(fileUri))
+		subprocess.call("git-difftool --tool=meld --no-prompt "+os.path.basename(fileUri),stdout=subprocess.PIPE,cwd=os.path.dirname(fileUri), shell=True)
 		pass
