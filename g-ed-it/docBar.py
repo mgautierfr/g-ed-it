@@ -41,9 +41,6 @@ class DocBar (object):
 		self.tab = tab
 		self.gitAction = gitAction
 		self.docHelper = docHelper
-		self.child = self.tab.get_children()[0]
-		self.tab.remove(self.child)
-		self.vbox = gtk.VBox()
 		
 		self.docBar = gtk.HBox() 
 		
@@ -67,23 +64,16 @@ class DocBar (object):
 		self.docBar.pack_start(self.btn_add, False, False)
 		self.docBar.pack_start(self.btn_commit, False, False)
 		
-		self.vbox.pack_start(self.docBar, False, False)
-		self.vbox.pack_start(self.child)
-		
-		self.tab.add(self.vbox)
+		self.tab.pack_start(self.docBar, False, False)
 		
 		self.tab.show_all()
 		
 		self.update_ui()
 		
 	def deactivate(self):
-		self.tab.remove(self.vbox)
-		self.vbox.remove(self.child)
-		self.tab.add(self.child)
+		self.tab.remove(self.docBar)
 		
-		self.doc = None
-		self.vbox = None
-		self.child = None
+		self.docBar = None
 		self.tab = None
 		
 	def update_ui(self):
