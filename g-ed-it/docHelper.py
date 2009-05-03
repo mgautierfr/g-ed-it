@@ -21,15 +21,19 @@
 import os.path
 import subprocess
 
-import docBar
+
 
 class DocHelper (object):
+	KEY = "G-ED-IT_DOCHELPER_KEY"
 	def __init__(self, tab, window, gitAction):
 		self.doc = tab.get_document()
 		self.gitAction = gitAction
 		self.tab = tab
+		
+		self.tab.set_data(self.KEY,self)
+		
 		self.getDocState()
-				
+
 		self.update_handler1 =  self.doc.connect("saved",self.doc_changed)
 		self.update_handler2 =  self.doc.connect("loaded",self.doc_changed)
 		pass
@@ -37,6 +41,7 @@ class DocHelper (object):
 	def deactivate(self):
 		self.doc.disconnect(self.update_handler1)
 		self.doc.disconnect(self.update_handler2)
+		self.tab.set_data(self.KEY,self)
 		
 	def update_ui(self):
 		self.getDocState()

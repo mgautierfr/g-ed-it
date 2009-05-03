@@ -29,6 +29,7 @@ import os
 import time
 
 import docHelper
+import docBar
 
 ui_string = """<ui>
   <menubar name="MenuBar">
@@ -48,8 +49,11 @@ class WindowHelper:
 		self.plugin = plugin
 		self.gitAction = gitAction
 		
+		
 		self.docHelpers = {}
 		self.create_all_docHelper()
+		
+		self.docBar = docBar.DocBar(self.gitAction,window)
 
 		self.create_actionManager()
 		# add menu
@@ -62,6 +66,8 @@ class WindowHelper:
 		self.manager.remove_action_group(self.action_group)
 		self.manager.ensure_update()
 		self.manager = None
+		
+		self.docBar.deactivate()
 		
 		self.window.disconnect(self.added_hid)
 		self.window.disconnect(self.removed_hid)
