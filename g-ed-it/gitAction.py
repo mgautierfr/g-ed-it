@@ -33,14 +33,22 @@ class GitAction (object):
 		self.plugin = plugin
 		pass
 	
-	def commit(self,launcher,window,fileUriMethod = None):
+	def commit(self,launcher,window,fileUriMethod = None, commitTextMethod = None):
 		if fileUriMethod :
 			fileUri = fileUriMethod()
 			allFile = False
 		else:
 			fileUri = window.get_active_document().get_uri_for_display()
 			allFile = True
-		self.commitDialog.run(window,fileUri,allFile)
+		if commitTextMethod:
+			text = commitTextMethod()
+			if text != "":
+				subprocess.call('git-commit -m "'+text+'" '+os.path.basename(fileUri),stdout=subprocess.PIPE,cwd=os.path.dirname(fileUri), shell=True)
+				self.plugin.fast_update_ui()
+			else:
+				self.commitDialog.run(window,fileUri,allFile)
+		else:
+			self.commitDialog.run(window,fileUri,allFile)
 		pass
 	
 	def add(self,launcher,fileUriMethod = None):

@@ -46,11 +46,13 @@ class DocBar (object):
 		
 		self.lbl_status = gtk.Label("État du fichier")
 		
+		self.commit_text = gtk.Entry()
+		
 		self.btn_add = gtk.Button("add")
 		self.btn_add.connect("clicked", self.gitAction.add, self.tab.get_document().get_uri_for_display)
 		
 		self.btn_commit = gtk.Button("commit")
-		self.btn_commit.connect("clicked", self.gitAction.commit, window, self.tab.get_document().get_uri_for_display)
+		self.btn_commit.connect("clicked", self.gitAction.commit, window, self.tab.get_document().get_uri_for_display,self.get_and_clear_commitText)
 		
 		self.btn_diff_head_index = gtk.Button("diff HEAD/INDEX")
 		self.btn_diff_head_index.connect("clicked", self.gitAction.diff_head_index, self.tab.get_document().get_uri_for_display)
@@ -60,15 +62,21 @@ class DocBar (object):
 		
 		self.docBar.pack_start(self.btn_diff_head_index, False, False)
 		self.docBar.pack_start(self.btn_diff_index_wt, False, False)
-		self.docBar.pack_start(self.lbl_status, True, False)
-		self.docBar.pack_start(self.btn_add, False, False)
+		self.docBar.pack_start(self.lbl_status, True, True)
+		self.docBar.pack_start(self.commit_text, True, True)
 		self.docBar.pack_start(self.btn_commit, False, False)
+		self.docBar.pack_start(self.btn_add, False, False)
 		
 		self.tab.pack_start(self.docBar, False, False)
 		
 		self.tab.show_all()
 		
 		self.update_ui()
+		
+	def get_and_clear_commitText(self):
+		text = self.commit_text.get_text()
+		self.commit_text.set_text("")
+		return text
 		
 	def deactivate(self):
 		self.tab.remove(self.docBar)
@@ -83,6 +91,7 @@ class DocBar (object):
 		self.docBar.show()
 		self.btn_add.set_sensitive(self.docHelper.index2WT!=None or not self.docHelper.isCached)
 		self.btn_commit.set_sensitive(self.docHelper.HEAD2index!=None)
+		self.commit_text.set_sensitive(self.docHelper.HEAD2index!=None)
 		self.btn_diff_head_index.set_sensitive(self.docHelper.HEAD2index!=None)
 		self.btn_diff_index_wt.set_sensitive(self.docHelper.index2WT!=None)
 		text = "HEAD <-"
