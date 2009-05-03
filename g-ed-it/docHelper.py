@@ -29,9 +29,7 @@ class DocHelper (object):
 		self.gitAction = gitAction
 		self.tab = tab
 		self.getDocState()
-		
-		self.docBar = docBar.DocBar(tab,self.gitAction, window, self)
-		
+				
 		self.update_handler1 =  self.doc.connect("saved",self.doc_changed)
 		self.update_handler2 =  self.doc.connect("loaded",self.doc_changed)
 		pass
@@ -39,11 +37,9 @@ class DocHelper (object):
 	def deactivate(self):
 		self.doc.disconnect(self.update_handler1)
 		self.doc.disconnect(self.update_handler2)
-		self.docBar.deactivate()
 		
 	def update_ui(self):
 		self.getDocState()
-		self.docBar.update_ui()
 	
 	def doc_changed(self,doc,arg1):
 		self.getDocState()
