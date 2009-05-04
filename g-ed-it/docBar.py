@@ -93,11 +93,6 @@ class DocBar (object):
 			self.currentTab.show_all()
 		self.update_docBar_ui()
 		
-	def get_and_clear_commitText(self):
-		text = self.commit_text.get_text()
-		self.commit_text.set_text("")
-		return text
-		
 	def deactivate(self):
 		if self.currentTab:
 			self.currentTab.remove(self.docBar)

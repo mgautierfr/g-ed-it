@@ -37,15 +37,13 @@ class GitAction (object):
 		fileUri = window.get_active_tab().get_document().get_uri_for_display()
 		self.commitDialog.run(window,fileUri,True)
 	
-	def commit_current_file(self, button, window, commitTextMethod = None):
+	def commit_current_file(self, button, window):
 		fileUri = window.get_active_tab().get_document().get_uri_for_display()
-		if commitTextMethod:
-			text = commitTextMethod()
-			if text != "":
-				subprocess.call('git-commit -m "'+text+'" '+os.path.basename(fileUri),stdout=subprocess.PIPE,cwd=os.path.dirname(fileUri), shell=True)
-				self.plugin.fast_update_ui()
-			else:
-				self.commitDialog.run(window,fileUri,False)
+		text = self.plugin.windowHelpers[window].docBar.commit_text.get_text()
+		self.plugin.windowHelpers[window].docBar.commit_text.set_text("")
+		if text != "":
+			subprocess.call('git-commit -m "'+text+'" '+os.path.basename(fileUri),stdout=subprocess.PIPE,cwd=os.path.dirname(fileUri), shell=True)
+			window.emit("active-tab-state-changed")
 		else:
 			self.commitDialog.run(window,fileUri,False)
 	
