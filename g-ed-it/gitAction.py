@@ -33,28 +33,32 @@ class GitAction (object):
 		self.plugin = plugin
 		pass
 	
-	def commit(self,launcher,window,fileUriMethod = None):
-		if fileUriMethod :
-			fileUri = fileUriMethod()
-			allFile = False
+	def commit(self, button, window):
+		fileUri = window.get_active_tab().get_document().get_uri_for_display()
+		self.commitDialog.run(window,fileUri,True)
+	
+	def commit_current_file(self, button, window):
+		fileUri = window.get_active_tab().get_document().get_uri_for_display()
+		text = self.plugin.windowHelpers[window].docBar.commit_text.get_text()
+		self.plugin.windowHelpers[window].docBar.commit_text.set_text("")
+		if text != "":
+			subprocess.call('git-commit -m "'+text+'" '+os.path.basename(fileUri),stdout=subprocess.PIPE,cwd=os.path.dirname(fileUri), shell=True)
+			window.emit("active-tab-state-changed")
 		else:
-			fileUri = window.get_active_document().get_uri_for_display()
-			allFile = True
-		self.commitDialog.run(window,fileUri,allFile)
+			self.commitDialog.run(window,fileUri,False)
+	
+	def add(self, button, window):
+		fileUri = window.get_active_tab().get_document().get_uri_for_display()
+		subprocess.call("git-add "+os.path.basename(fileUri),stdout=subprocess.PIPE,cwd=os.path.dirname(fileUri), shell=True)
+		window.emit("active-tab-state-changed")
 		pass
 	
-	def add(self,launcher,fileUriMethod = None):
-		if fileUriMethod : fileUri = fileUriMethod()
-		subprocess.call(["git-add",os.path.basename(fileUri)],stdout=subprocess.PIPE,cwd=os.path.dirname(fileUri))
-		self.plugin.fast_update_ui()
+	def diff_head_index(self, button, window):
+		fileUri = window.get_active_tab().get_document().get_uri_for_display()
+		subprocess.call("git-diff --cached "+os.path.basename(fileUri),stdout=subprocess.PIPE,cwd=os.path.dirname(fileUri), shell=True)
 		pass
 	
-	def diff_head_index(self,launcher, fileUriMethod = None):
-		if fileUriMethod : fileUri = fileUriMethod()
-		subprocess.call(["git-difftool","--tool=meld","--no-prompt","--cached",os.path.basename(fileUri)],stdout=subprocess.PIPE,cwd=os.path.dirname(fileUri))
-		pass
-	
-	def diff_index_wt(self, launcher, fileUriMethod = None):
-		if fileUriMethod : fileUri = fileUriMethod()
-		subprocess.call(["git-difftool","--tool=meld","--no-prompt",os.path.basename(fileUri)],stdout=subprocess.PIPE,cwd=os.path.dirname(fileUri))
+	def diff_index_wt(self, button, window):
+		fileUri = window.get_active_tab().get_document().get_uri_for_display()
+		subprocess.call("git-diff "+os.path.basename(fileUri),stdout=subprocess.PIPE,cwd=os.path.dirname(fileUri), shell=True)
 		pass
