@@ -36,7 +36,7 @@ class DocHelper (object):
 		pass
 	
 	def deactivate(self):
-		self.tab.set_data(self.KEY,self)
+		self.tab.set_data(self.KEY,None)
 		
 	def getDocState(self):
 		uri = self.doc.get_uri_for_display()
