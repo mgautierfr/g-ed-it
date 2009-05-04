@@ -80,8 +80,6 @@ class WindowHelper:
 		self.gitAction = None
 		
 	def update_ui(self):
-		for docHelper in self.docHelpers:
-			self.docHelpers[docHelper].update_ui()
 		return
 	
 	def fast_update_ui(self):
