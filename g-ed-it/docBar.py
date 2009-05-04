@@ -58,16 +58,16 @@ class DocBar (object):
 		self.commit_text = gtk.Entry()
 		
 		self.btn_add = gtk.Button("add")
-		self.btn_add.connect("clicked", self.gitAction.add)
+		self.btn_add.connect("clicked", self.gitAction.add, self.window)
 		
 		self.btn_commit = gtk.Button("commit")
-		self.btn_commit.connect("clicked", self.gitAction.commit, self.window,self.get_and_clear_commitText)
+		self.btn_commit.connect("clicked", self.gitAction.commit_current_file, self.window)
 		
 		self.btn_diff_head_index = gtk.Button("diff HEAD/INDEX")
-		self.btn_diff_head_index.connect("clicked", self.gitAction.diff_head_index)
+		self.btn_diff_head_index.connect("clicked", self.gitAction.diff_head_index, self.window)
 		
 		self.btn_diff_index_wt = gtk.Button("diff INDEX/WT")
-		self.btn_diff_index_wt.connect("clicked", self.gitAction.diff_index_wt)
+		self.btn_diff_index_wt.connect("clicked", self.gitAction.diff_index_wt, self.window)
 		
 		self.docBar.pack_start(self.btn_diff_head_index, False, False)
 		self.docBar.pack_start(self.btn_diff_index_wt, False, False)
@@ -109,10 +109,13 @@ class DocBar (object):
 		if not self.currentTab:
 			return
 		_docHelper = self.currentTab.get_data(docHelper.DocHelper.KEY)
-		if not _docHelper or not _docHelper.inGitDir :
+		if not _docHelper :
 			self.docBar.hide()
 			return 
-		
+		_docHelper.getDocState()
+		if not _docHelper.inGitDir :
+			self.docBar.hide()
+			return 
 		self.docBar.show()
 		self.btn_add.set_sensitive(_docHelper.index2WT!=None or not _docHelper.isCached)
 		self.btn_commit.set_sensitive(_docHelper.HEAD2index!=None)

@@ -49,10 +49,8 @@ class CommitDialog (object):
 		self.cwd = os.path.dirname(fileURI)
 		if allFile:
 			self.fileName = None
-#			templateMsg = subprocess.Popen(["git-status","-s"],stdout=subprocess.PIPE,cwd=self.cwd).communicate()[0]
 		else:
 			self.fileName = os.path.basename(fileURI)
-#			templateMsg = subprocess.Popen(["git-status","-s",self.fileName],stdout=subprocess.PIPE,cwd=self.cwd).communicate()[0]
 		self.commit_text_box.get_buffer().set_text("")
 		self.commit_dialog.show()
 
