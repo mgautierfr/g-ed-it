@@ -20,7 +20,8 @@
 
 import os
 import time
-import subprocess
+from gitRun import gitRun
+
 
 class CommitDialog (object):
 
@@ -61,9 +62,9 @@ class CommitDialog (object):
 		commit_text_buffer = self.commit_text_box.get_buffer()
 		commit_text = commit_text_buffer.get_text(commit_text_buffer.get_start_iter(),commit_text_buffer.get_end_iter())
 		if self.fileName :
-			subprocess.call('git-commit -m "'+commit_text+'" '+self.fileName,stdout=subprocess.PIPE,cwd=self.cwd, shell=True)
+			gitRun('commit',['-m "'+commit_text+'"',self.fileName],self.cwd)
 		else:
-			subprocess.call('git-commit -m "'+commit_text+'"',stdout=subprocess.PIPE,cwd=self.cwd, shell=True)
+			gitRun('commit',[' -m "'+commit_text+'"'],self.cwd)
 		commit_text_buffer.set_text("")
 		self.commit_dialog.hide()
 		self.plugin.fast_update_ui()

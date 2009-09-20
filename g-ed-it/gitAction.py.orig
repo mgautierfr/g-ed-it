@@ -20,7 +20,7 @@
 
 import os.path
 import gtk
-from gitRun import gitRun
+import subprocess
 
 import commitDialog
 
@@ -42,23 +42,34 @@ class GitAction (object):
 		text = self.plugin.windowHelpers[window].docBar.commit_text.get_text()
 		self.plugin.windowHelpers[window].docBar.commit_text.set_text("")
 		if text != "":
-			gitRun('commit',['-m "'+text+'"',os.path.basename(fileUri)],os.path.dirname(fileUri))
+			subprocess.call('git-commit -m "'+text+'" '+os.path.basename(fileUri),stdout=subprocess.PIPE,cwd=os.path.dirname(fileUri), shell=True)
 			window.emit("active-tab-state-changed")
 		else:
 			self.commitDialog.run(window,fileUri,False)
 	
 	def add(self, button, window):
 		fileUri = window.get_active_tab().get_document().get_uri_for_display()
-		gitRun("add",os.path.basename(fileUri),os.path.dirname(fileUri))
+		subprocess.call("git-add "+os.path.basename(fileUri),stdout=subprocess.PIPE,cwd=os.path.dirname(fileUri), shell=True)
 		window.emit("active-tab-state-changed")
 		pass
 	
+<<<<<<< HEAD:g-ed-it/gitAction.py
+	def diff_head_index(self,launcher, fileUriMethod = None):
+		if fileUriMethod : fileUri = fileUriMethod()
+		subprocess.call(["git-difftool","--tool=meld","--no-prompt","--cached",os.path.basename(fileUri)],stdout=subprocess.PIPE,cwd=os.path.dirname(fileUri))
+		pass
+	
+	def diff_index_wt(self, launcher, fileUriMethod = None):
+		if fileUriMethod : fileUri = fileUriMethod()
+		subprocess.call(["git-difftool","--tool=meld","--no-prompt",os.path.basename(fileUri)],stdout=subprocess.PIPE,cwd=os.path.dirname(fileUri))
+=======
 	def diff_head_index(self, button, window):
 		fileUri = window.get_active_tab().get_document().get_uri_for_display()
-		gitRun("diff",["--cached",os.path.basename(fileUri)],os.path.dirname(fileUri))
+		subprocess.call("git-diff --cached "+os.path.basename(fileUri),stdout=subprocess.PIPE,cwd=os.path.dirname(fileUri), shell=True)
 		pass
 	
 	def diff_index_wt(self, button, window):
 		fileUri = window.get_active_tab().get_document().get_uri_for_display()
-		gitRun("diff",os.path.basename(fileUri),os.path.dirname(fileUri))
+		subprocess.call("git-diff "+os.path.basename(fileUri),stdout=subprocess.PIPE,cwd=os.path.dirname(fileUri), shell=True)
+>>>>>>> 5bc39fc9f68fe44a42f7fb4fd2a9845931337e49:g-ed-it/gitAction.py
 		pass
