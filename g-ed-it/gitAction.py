@@ -55,10 +55,10 @@ class GitAction (object):
 	
 	def diff_head_index(self, button, window):
 		fileUri = window.get_active_tab().get_document().get_uri_for_display()
-		gitRun("diff",["--cached",os.path.basename(fileUri)],os.path.dirname(fileUri))
+		gitRun("difftool",["--cached","--tool=meld","--no-prompt",os.path.basename(fileUri)],os.path.dirname(fileUri))
 		pass
 	
 	def diff_index_wt(self, button, window):
 		fileUri = window.get_active_tab().get_document().get_uri_for_display()
-		gitRun("diff",os.path.basename(fileUri),os.path.dirname(fileUri))
+		gitRun("difftool",["--tool=meld","--no-prompt",os.path.basename(fileUri)],os.path.dirname(fileUri))
 		pass
