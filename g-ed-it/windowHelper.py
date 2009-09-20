@@ -81,9 +81,6 @@ class WindowHelper:
 		
 	def update_ui(self):
 		return
-	
-	def fast_update_ui(self):
-		self.docHelpers[self.window.get_active_document()].update_ui()
 		    
 	def create_actionManager(self):
 		self.manager = self.window.get_ui_manager()

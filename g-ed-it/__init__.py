@@ -41,7 +41,4 @@ class G_ed_it(gedit.Plugin):
 	def update_ui(self, window):
 		self.windowHelpers[window].update_ui()
 	
-	def fast_update_ui(self):
-		for windowHelper in self.windowHelpers :
-			self.windowHelpers[windowHelper].fast_update_ui()
 		

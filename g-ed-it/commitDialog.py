@@ -47,6 +47,7 @@ class CommitDialog (object):
 		
 	def run(self,window,fileURI, allFile):
 		self.commit_dialog.set_transient_for(window)
+		self.current_window = window
 		self.cwd = os.path.dirname(fileURI)
 		if allFile:
 			self.fileName = None
@@ -57,6 +58,7 @@ class CommitDialog (object):
 
 	def on_cancel_button_clicked(self, close_button):
 		self.commit_dialog.hide()
+		self.current_window = None
 	
 	def on_commit_button_clicked(self, close_button):
 		commit_text_buffer = self.commit_text_box.get_buffer()
@@ -67,7 +69,8 @@ class CommitDialog (object):
 			gitRun('commit',[' -m "'+commit_text+'"'],self.cwd)
 		commit_text_buffer.set_text("")
 		self.commit_dialog.hide()
-		self.plugin.fast_update_ui()
+		self.current_window.emit("active-tab-state-changed")
+		self.current_window = None
 		pass
 		
 	def on_commit_text_changed(self, commit_text_entry):
