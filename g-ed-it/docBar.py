@@ -77,11 +77,11 @@ class DocBar (object):
 		self.docBar.pack_start(self.btn_add, False, False)
 		
 	def active_tab_changed(self,window,tab):
-		print "tab_change"
+#		print "tab_change"
 		self.swap_to_currentTab(tab)
 	
 	def active_tab_state_changed(self,window):
-		print "tab_state_changed"
+#		print "tab_state_changed"
 		self.update_docBar_ui()
 		
 	def swap_to_currentTab(self, tab):
