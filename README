@@ -1,0 +1,60 @@
+Copyright 2009 Matthieu Gautier
+
+This file is part of g-ed-it.
+
+g-ed-it is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+any later version.
+
+g-ed-it is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with g-ed-it.  If not, see <http://www.gnu.org/licenses/>.
+
+
+I - What is g-ed-it
+g-ed-it is a small (and fast) git plugin for gedit.
+Its main goal is to provide an easy (and fast) way to add and commit small modifications.
+g-ed-it does NOT provide a full way to manage an entire git depot. (pull/push/branch/checkout/...)
+
+II - What I need to use g-ed-it.
+g-ed-it uses meld to show you some diff between files, so you must have meld installed.
+This plugin have benn tested with Fedora 11. But it should probably work with other distribs.
+
+II - How to install g-ed-it.
+Just detar g-ed-it archive into your gedit plugin directory (~/.gnome2/plugins)
+You should have (at least):
+- the file ~/.gnome2/plugins/g-ed-it.gedit_plugin
+- the directory ~/.gnome2/plugins/g-ed-it (and a lot of files into)
+Lauch gedit and active g-ed-it into the preference dialog.
+
+III - How to use g-ed-it.
+Open a file that is into a git repo.
+* g-ed-it automatically detect it is part of a git repo and give you some informations and buttons on the top of the document view.
+Starting from the right there are:
+- The "add" button:             It adds the file (or its change) to the index.
+- The "commit" button:          It commits the file into your git depot.
+- A text entry:                 If you enter there, the "commit" button will use it as commit message.
+                                Else the commit message is asked to you.
+- A "status" text:              It shows you the status of the file, on one part, between your working tree (WT) and your INDEX,
+                                and, on the other part, between your INDEX and your git repo (HEAD)
+- The "diff INDEX/WT" button:   It launches your favorite diff tool (meld for now) showing you the difference between WT and INDEX.
+- The "diff HEAD/INDEX" button: It launches your favorite diff tool (meld for now) showing you the difference between INDEX and HEAD.
+
+* A new menu entry (git) is available:
+- Commit:       Commit ALL files into the index.
+- Add to index: Add to index the current file (as the "add" button do)
+
+IV - Roadmap, known bugs:
+* Adding some configuration (especially to launch other diff tool than meld)
+* Adding a side panel to show the status of the entire (as git status do)
+
+V - Remarks, Feedbacks, Critics ...
+If you have any feedbacks, feature requests, problems or whatever, please send a email at:
+mgautier <at> fedoraproject <dot> org 
+with a subject starting with "[g-ed-it]"
+
